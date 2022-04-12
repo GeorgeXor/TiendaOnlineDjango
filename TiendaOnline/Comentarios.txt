@@ -1,0 +1,63 @@
+django-admin startproject TiendaOnline -> Comando para crear un proyecto
+cd TiendaOnlinde -> Comando para ingresar a la ruta indicada 
+python manage.py startapp GestionPedidos -> Comando para crear una app dentro del proyecto de Django
+    Dentro de la App , en el archivo models , procedemos con la creacion de las clases que replresentan las tablas de la BD
+
+python manage.py check GestionPedidos -> Comando para validar que las modifiaciones que hacemos a nuestra app estan correctas , en este caso la creacion de los modelos para la bd.
+    Si todo es correcto nos regresa el mensaje: System check identified no issues (0 silenced).
+
+python manage.py makemigrations -> Comando para proceder con la creacion de la BD , las Clases que se crearon en Models.py se generaran como Tablas de BD
+     GestionPedidos\migrations\0001_initial.py
+    - Create model Articulos
+    - Create model Clientes
+    - Create model Pedidos
+
+python manage.py sqlmigrate GestionPedidos 0001  -> Con este comando creamos las sentencias SQL de las Clases que creamos en el archivo Models.py
+-- El resultado del comando es el siguiente
+BEGIN;
+--
+-- Create model Articulos
+--
+CREATE TABLE "GestionPedidos_articulos" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "nombre" varchar(30) NOT NULL, "seccion" varchar(20) NOT NULL, "precio" integer NOT NULL);
+--
+-- Create model Clientes
+--
+CREATE TABLE "GestionPedidos_clientes" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "nombre" varchar(30) NOT NULL, "direccion" varchar(50) NOT NULL, "email" varchar(254) NOT NULL, "telefono" varchar(10) NOT NULL);
+--
+-- Create model Pedidos
+--
+CREATE TABLE "GestionPedidos_pedidos" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "numero" integer NOT NULL, "fecha" date NOT NULL, "entregado" bool NOT NULL);
+COMMIT;
+
+python manage.py migrate -> COmando para crear las tablas en la BD , es necesario hacer los pasos anteriores para que se creen las tablas
+
+------------------------------------------------------------------------
+
+----------Insertar Registros:----------
+
+Primera Opcion:
+
+#Creamos una instancia del Objeto Articulos
+art = Articulos(nombre ='Play Station 5' , seccion = 'VideoJuegos' , precio = 14000 ) 
+
+#Para Guardar los cambios en la BD , ejecutamos el Siguiente comando
+art.save()
+
+Segunda Opcion
+
+#Con esta opcion podemos crear un registro de una forma mas facil y en menos lineas de codigo
+art3 = Articulos.objects.create(nombre='Nintendo Switch' ,seccion = 'VideoJuegos' ,precio=10000)
+
+De esta forma se inserta un registro en una sola linea de codigo.
+
+----------UPDATE----------
+>>> art.precio= 15000
+>>> art.save()
+----------DELETE----------
+>>> art4 = Articulos.objects.get(id=3) --> Traemos el elemento
+>>> art4.delete() --> Utlizamos el comando DELETE
+(1, {'GestionPedidos.Articulos': 1}) --> Mensaje que se regresa al Eliminar el registro
+----------SELECT----------
+>>> lista = Articulos.objects.all() -> Seleccionamos toda la informacion de la tabla Articulos
+>>> lista.query.__str__() --> Mostramos el contenido de la Variable lista
+    El resultado es: 'SELECT "GestionPedidos_articulos"."id", "GestionPedidos_articulos"."nombre", "GestionPedidos_articulos"."seccion", "GestionPedidos_articulos"."precio" FROM "GestionPedidos_articulos"'
